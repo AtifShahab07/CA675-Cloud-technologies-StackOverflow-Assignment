@@ -1,0 +1,19 @@
+-- Create table in hive as a pre-requisite to load data into hive from pig.
+
+CREATE TABLE stackex_data.stackex_Transformed (id int, score int, viewcount int, owneruserid int, title string, tags string, body string); 
+
+-- Check the count of rows inserted from PIG relation
+
+SELECT COUNT(id) FROM stackex_data.stackex_Transformed;
+
+-- Select TOP 10 Posts by score
+	
+SELECT id, score FROM stackex_data.stackex_Transformed ORDER BY score DESC LIMIT 10;
+
+-- Select TOP 10 Users by score
+
+SELECT owneruserid, SUM(score) FROM stackex_data.stackex_Transformed where owneruserid is not NULL GROUP BY owneruserid ORDER BY SUM(score) DESC LIMIT 10;
+
+-- Select COUNT of DISTINCT users who used word 'cloud' in their post (i.e either in title, body or tag)
+	
+SELECT COUNT(DISTINCT(owneruserid)) FROM stackex_data.stackex_Transformed WHERE LCASE(body) LIKE '% cloud %' OR LCASE(title) LIKE '% cloud %' OR LCASE(tags) LIKE '% cloud %';
